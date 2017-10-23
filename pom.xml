@@ -1320,6 +1320,7 @@
             <systemProperties>
               <java.io.tmpdir>${project.build.directory}</java.io.tmpdir>
             </systemProperties>
+            <argLine>-Xmx1536m</argLine>
           </configuration>
         </plugin>
         <plugin>
@@ -1446,7 +1447,7 @@
               <value>${basedir}/target</value>
             </property>
           </systemProperties>
-          <argLine>-Xmx512m</argLine>
+          <argLine>-Xmx1536m</argLine>
         </configuration>
       </plugin>
       <plugin>
