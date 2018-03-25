@@ -93,6 +93,10 @@
       <groupId>${project.groupId}</groupId>
       <artifactId>apiman-gateway-engine-prometheus</artifactId>
     </dependency>
+    <dependency>
+      <groupId>${project.groupId}</groupId>
+      <artifactId>apiman-gateway-engine-filesystem</artifactId>
+    </dependency>
 
     <!-- Third Party Dependencies -->
     <dependency>
