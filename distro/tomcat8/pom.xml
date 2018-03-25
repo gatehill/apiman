@@ -13,7 +13,7 @@
   
   <dependencies>
     <!-- The Tomcat 8 version of APIMan -->
-    <dependency>
+    <!-- <dependency>
       <groupId>${project.groupId}</groupId>
       <artifactId>apiman-manager-api-war-tomcat8</artifactId>
       <type>war</type>
@@ -27,7 +27,7 @@
       <groupId>${project.groupId}</groupId>
       <artifactId>apiman-gateway-platforms-war-tomcat8-api</artifactId>
       <type>war</type>
-    </dependency>
+    </dependency> -->
     <dependency>
       <groupId>${project.groupId}</groupId>
       <artifactId>apiman-gateway-platforms-war-tomcat8-gateway</artifactId>
@@ -37,10 +37,16 @@
       <groupId>${project.groupId}</groupId>
       <artifactId>apiman-distro-data</artifactId>
     </dependency>
-    <dependency>
+    <!-- <dependency>
       <groupId>${project.groupId}</groupId>
       <artifactId>apiman-distro-es</artifactId>
       <type>war</type>
+    </dependency> -->
+
+    <!-- backing store provider -->
+    <dependency>
+      <groupId>com.hazelcast</groupId>
+      <artifactId>hazelcast</artifactId>
     </dependency>
 
     <!-- tomcat default logging provider for slf4j -->

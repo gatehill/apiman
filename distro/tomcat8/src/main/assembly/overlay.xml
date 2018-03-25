@@ -7,7 +7,7 @@
   <includeBaseDirectory>false</includeBaseDirectory>
   <dependencySets>
     <!-- apiman-manager -->
-    <dependencySet>
+    <!-- <dependencySet>
       <outputDirectory>webapps</outputDirectory>
       <includes>
         <include>*:apiman-manager-ui-war-tomcat8:war</include>
@@ -19,9 +19,9 @@
       <useTransitiveFiltering>false</useTransitiveFiltering>
       <directoryMode>0755</directoryMode>
       <fileMode>0755</fileMode>
-    </dependencySet>
+    </dependencySet> -->
     <!-- apiman -->
-    <dependencySet>
+    <!-- <dependencySet>
       <outputDirectory>webapps</outputDirectory>
       <includes>
         <include>*:apiman-manager-api-war-tomcat8:war</include>
@@ -33,9 +33,9 @@
       <useTransitiveFiltering>false</useTransitiveFiltering>
       <directoryMode>0755</directoryMode>
       <fileMode>0755</fileMode>
-    </dependencySet>
+    </dependencySet> -->
     <!-- apiman-gateway-api -->
-    <dependencySet>
+    <!-- <dependencySet>
       <outputDirectory>webapps</outputDirectory>
       <includes>
         <include>*:apiman-gateway-platforms-war-tomcat8-api:war</include>
@@ -47,7 +47,7 @@
       <useTransitiveFiltering>false</useTransitiveFiltering>
       <directoryMode>0755</directoryMode>
       <fileMode>0755</fileMode>
-    </dependencySet>
+    </dependencySet> -->
     <!-- apiman-gateway -->
     <dependencySet>
       <outputDirectory>webapps</outputDirectory>
@@ -62,13 +62,26 @@
       <directoryMode>0755</directoryMode>
       <fileMode>0755</fileMode>
     </dependencySet>
-    <!-- apiman -->
-    <dependencySet>
+    <!-- es -->
+    <!-- <dependencySet>
       <outputDirectory>webapps</outputDirectory>
       <includes>
         <include>*:apiman-distro-es:war</include>
       </includes>
       <outputFileNameMapping>apiman-es.war</outputFileNameMapping>
+      <useProjectArtifact>false</useProjectArtifact>
+      <useProjectAttachments>false</useProjectAttachments>
+      <useTransitiveDependencies>false</useTransitiveDependencies>
+      <useTransitiveFiltering>false</useTransitiveFiltering>
+      <directoryMode>0755</directoryMode>
+      <fileMode>0755</fileMode>
+    </dependencySet> -->
+    <!-- Hazelcast -->
+    <dependencySet>
+      <outputDirectory>lib</outputDirectory>
+      <includes>
+        <include>*:hazelcast:jar</include>
+      </includes>
       <useProjectArtifact>false</useProjectArtifact>
       <useProjectAttachments>false</useProjectAttachments>
       <useTransitiveDependencies>false</useTransitiveDependencies>
