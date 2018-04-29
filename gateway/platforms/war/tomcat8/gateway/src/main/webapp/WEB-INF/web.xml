@@ -17,4 +17,14 @@
     <url-pattern>/*</url-pattern>
   </servlet-mapping>
 
+  <!-- Status Servlet -->
+  <servlet>
+    <servlet-name>StatusServlet</servlet-name>
+    <servlet-class>io.apiman.gateway.platforms.servlet.StatusServlet</servlet-class>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>StatusServlet</servlet-name>
+    <url-pattern>/system/status</url-pattern>
+  </servlet-mapping>
+
 </web-app>
