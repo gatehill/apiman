@@ -17,12 +17,7 @@ package io.apiman.gateway.platforms.servlet;
 
 import io.apiman.common.util.ApimanPathUtils;
 import io.apiman.common.util.ApimanPathUtils.ApiRequestPathInfo;
-import io.apiman.gateway.engine.IApiClientResponse;
-import io.apiman.gateway.engine.IApiRequestExecutor;
-import io.apiman.gateway.engine.IEngine;
-import io.apiman.gateway.engine.IEngineResult;
-import io.apiman.gateway.engine.IPolicyErrorWriter;
-import io.apiman.gateway.engine.IPolicyFailureWriter;
+import io.apiman.gateway.engine.*;
 import io.apiman.gateway.engine.async.IAsyncHandler;
 import io.apiman.gateway.engine.async.IAsyncResult;
 import io.apiman.gateway.engine.async.IAsyncResultHandler;
@@ -35,19 +30,24 @@ import io.apiman.gateway.engine.io.ByteBuffer;
 import io.apiman.gateway.engine.io.IApimanBuffer;
 import io.apiman.gateway.engine.io.ISignalWriteStream;
 import io.apiman.gateway.platforms.servlet.i18n.Messages;
+import io.apiman.gateway.platforms.servlet.lifecycle.AsyncServletRequestLifecycle;
+import io.apiman.gateway.platforms.servlet.lifecycle.BlockingServletRequestLifecycle;
+import io.apiman.gateway.platforms.servlet.lifecycle.ServletRequestLifecycle;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 import java.util.Enumeration;
-import java.util.concurrent.CountDownLatch;
 
+import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+
+import static java.util.Optional.ofNullable;
 
 /**
  * The API Management gateway servlet.  This servlet is responsible for converting inbound
@@ -59,8 +59,9 @@ import javax.servlet.http.HttpServletResponse;
  * @author eric.wittmann@redhat.com
  */
 public abstract class GatewayServlet extends HttpServlet {
-
     private static final long serialVersionUID = 958726685958622333L;
+    private ServletConfig config;
+    private boolean async;
 
     /**
      * Constructor.
@@ -68,34 +69,44 @@ public abstract class GatewayServlet extends HttpServlet {
     public GatewayServlet() {
     }
 
+    @Override
+    public void init(ServletConfig config) throws ServletException {
+        super.init(config);
+        this.config = config;
+        async = ofNullable(config.getInitParameter("async")).map(Boolean::parseBoolean).orElse(false);
+    }
+
     /**
      * @see javax.servlet.http.HttpServlet#service(javax.servlet.http.HttpServletRequest, javax.servlet.http.HttpServletResponse)
      */
     @Override
-    protected void service(HttpServletRequest req, HttpServletResponse resp)
-            throws ServletException, IOException {
-        String method = req.getMethod();
-        doAction(req, resp, method);
+    protected void service(HttpServletRequest req, HttpServletResponse resp) {
+        final ServletRequestLifecycle lifecycle;
+        if (async) {
+            lifecycle = new AsyncServletRequestLifecycle(req, config);
+        } else {
+            lifecycle = new BlockingServletRequestLifecycle(resp);
+        }
+        doAction(req, lifecycle, req.getMethod());
     }
 
     /**
      * Generic handler for all types of http actions/verbs.
      * @param req
-     * @param resp
+     * @param lifecycle
      * @param action
      */
-    protected void doAction(final HttpServletRequest req, final HttpServletResponse resp, String action) {
+    protected void doAction(final HttpServletRequest req, final ServletRequestLifecycle lifecycle, String action) {
         // Read the request.
         ApiRequest srequest;
         try {
             srequest = readRequest(req);
             srequest.setType(action);
         } catch (Exception e) {
-            writeError(null, resp, e);
+            writeError(null, lifecycle.getResponse(), e);
             return;
         }
 
-        final CountDownLatch latch = new CountDownLatch(1);
         final ApiRequest finalRequest = srequest;
 
         // Now execute the request via the apiman engine
@@ -106,6 +117,7 @@ public abstract class GatewayServlet extends HttpServlet {
                     IEngineResult engineResult = asyncResult.getResult();
                     if (engineResult.isResponse()) {
                         try {
+                            final HttpServletResponse resp = lifecycle.getResponse();
                             writeResponse(resp, engineResult.getApiResponse());
                             final ServletOutputStream outputStream = resp.getOutputStream();
                             engineResult.bodyHandler(new IAsyncHandler<IApimanBuffer>() {
@@ -135,7 +147,7 @@ public abstract class GatewayServlet extends HttpServlet {
                                         // connection to the back-end API.
                                         throw new RuntimeException(e);
                                     } finally {
-                                        latch.countDown();
+                                        lifecycle.onProcessingComplete();
                                     }
                                 }
                             });
@@ -144,16 +156,16 @@ public abstract class GatewayServlet extends HttpServlet {
                             // need to abort the engine result (which will let the back-end connection
                             // close down).
                             engineResult.abort(e);
-                            latch.countDown();
+                            lifecycle.onProcessingComplete();
                             throw new RuntimeException(e);
                         }
                     } else {
-                        writeFailure(finalRequest, resp, engineResult.getPolicyFailure());
-                        latch.countDown();
+                        writeFailure(finalRequest, lifecycle.getResponse(), engineResult.getPolicyFailure());
+                        lifecycle.onProcessingComplete();
                     }
                 } else {
-                    writeError(finalRequest, resp, asyncResult.getError());
-                    latch.countDown();
+                    writeError(finalRequest, lifecycle.getResponse(), asyncResult.getError());
+                    lifecycle.onProcessingComplete();
                 }
             }
         });
@@ -175,7 +187,7 @@ public abstract class GatewayServlet extends HttpServlet {
             }
         });
         executor.execute();
-        try { latch.await(); } catch (InterruptedException e) { }
+        lifecycle.onProcessingStarted();
     }
 
     /**
@@ -382,7 +394,7 @@ public abstract class GatewayServlet extends HttpServlet {
 
     /**
      * Parse a API request path from servlet path info.
-     * @param pathInfo
+     * @param request
      * @return the path info parsed into its component parts
      */
     protected static final ApiRequestPathInfo parseApiRequestPath(HttpServletRequest request) {
@@ -421,5 +433,4 @@ public abstract class GatewayServlet extends HttpServlet {
 
         return rval;
     }
-
 }

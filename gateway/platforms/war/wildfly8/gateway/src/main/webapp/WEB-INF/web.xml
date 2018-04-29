@@ -11,6 +11,16 @@
   <servlet>
     <servlet-name>GatewayServlet</servlet-name>
     <servlet-class>io.apiman.gateway.platforms.war.servlets.WarGatewayServlet</servlet-class>
+    <init-param>
+      <param-name>async</param-name>
+      <param-value>false</param-value>
+    </init-param>
+    <!--
+    <init-param>
+      <param-name>asyncTimeoutMs</param-name>
+      <param-value>60000</param-value>
+    </init-param>
+    -->
   </servlet>
   <servlet-mapping>
     <servlet-name>GatewayServlet</servlet-name>
