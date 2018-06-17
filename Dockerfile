@@ -2,7 +2,7 @@
 # Platform builder
 #
 # This is a base image used by the
-# gatehill/kamara-gateway image.
+# threshold/gateway image.
 #######################################
 
 FROM maven:3.5-jdk-8
