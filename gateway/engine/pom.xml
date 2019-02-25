@@ -15,17 +15,17 @@
     <module>core</module>
     <module>es</module>
     <module>filesystem</module>
-    <module>hawkular</module>
+    <!--<module>hawkular</module>-->
     <module>hazelcast</module>
-    <module>influxdb</module>
-    <module>ispn</module>
-    <module>jdbc</module>
-    <module>osgi</module>
+    <!--<module>influxdb</module>-->
+    <!--<module>ispn</module>-->
+    <!--<module>jdbc</module>-->
+    <!--<module>osgi</module>-->
     <module>policies</module>
     <module>prometheus</module>
-    <module>vertx-eb-inmemory</module>
-    <module>vertx-polling</module>
-    <module>vertx-shareddata</module>
-    <module>3scale</module>
+    <!--<module>vertx-eb-inmemory</module>-->
+    <!--<module>vertx-polling</module>-->
+    <!--<module>vertx-shareddata</module>-->
+    <!--<module>3scale</module>-->
   </modules>
 </project>

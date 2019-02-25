@@ -35,7 +35,8 @@
       <groupId>${project.groupId}</groupId>
       <artifactId>apiman-gateway-engine-hazelcast</artifactId>
     </dependency>
-    <!-- <dependency>
+    <!--
+    <dependency>
       <groupId>${project.groupId}</groupId>
       <artifactId>apiman-gateway-engine-ispn</artifactId>
     </dependency>
@@ -54,7 +55,8 @@
     <dependency>
       <groupId>${project.groupId}</groupId>
       <artifactId>apiman-gateway-engine-influxdb</artifactId>
-    </dependency> -->
+    </dependency>
+    -->
     <dependency>
       <groupId>${project.groupId}</groupId>
       <artifactId>apiman-gateway-engine-policies</artifactId>
